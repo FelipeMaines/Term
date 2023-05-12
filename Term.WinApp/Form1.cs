@@ -96,11 +96,7 @@ namespace Term.WinApp
         {
             foreach (TextBox textBox in panel.Controls.OfType<TextBox>().OrderBy(tb => tb.Tag))
             {
-                if (textBox.WordWrap == false)
-                {
-                    MessageBox.Show("Nao pode apagar um elemento ja verificado!");
-                    return;
-                }
+               
 
                 string strTag = textBox.Tag.ToString();
 
@@ -108,6 +104,12 @@ namespace Term.WinApp
 
                 if (tag == jogo.contador - 1)
                 {
+                    if (textBox.WordWrap == false)
+                    {
+                        MessageBox.Show("Nao pode apagar um elemento ja verificado!");
+                        return;
+                    }
+
                     textBox.Text = "";
                     jogo.contador--;
                     break;
@@ -168,17 +170,15 @@ namespace Term.WinApp
                     }
                 }
 
-
-
                 else
                     continue;
-
-                if (VerificarVitoria(palavra))
-                    return;
-
-                if (VerificarDerrota())
-                    return;
             }
+
+            if (VerificarVitoria(palavra))
+                return;
+
+            if (VerificarDerrota())
+                return;
 
             inicial += 5;
             final += 5;
