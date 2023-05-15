@@ -1,4 +1,6 @@
 using System.Drawing.Drawing2D;
+using System.Globalization;
+using System.Linq;
 
 namespace Term.WinApp
 {
@@ -20,7 +22,8 @@ namespace Term.WinApp
         {
             if (sender is Button btn)
             {
-                string letra = btn.Text;
+                string letra = btn.Text.ToLower();
+               
 
                 if (DivisivelPorCinco())
                 {
@@ -35,6 +38,8 @@ namespace Term.WinApp
 
             jogo.contador++;
         }
+
+       
 
         private void EscreverNaCaixa(string letra)
         {
@@ -123,55 +128,47 @@ namespace Term.WinApp
 
             palavraChutada = PegarPalavraCaixa();
 
-            
+            int contador = 0;
 
-            foreach (TextBox textBox in panel.Controls.OfType<TextBox>())
+            foreach (TextBox textBox in panel.Controls.OfType<TextBox>().OrderBy(tb => tb.Tag))
             {
                 string strTag = textBox.Tag.ToString();
                 int tag = Convert.ToInt32(strTag);
 
                 if (tag >= inicial && tag <= final)
                 {
-
-                    if (palavra.Contains(textBox.Text.ToLower()))
+                    if (palavra.Contains(textBox.Text))
                     {
-                        int index = palavra.IndexOf(textBox.Text.ToLower());
-
                         try
                         {
-                            if (palavra[index].ToString().ToLower() != palavraChutada[index].ToString().ToLower())
+                            if (palavra[contador] == palavraChutada[contador])
+                            {
+                                textBox.BackColor = Color.Green;
+                                textBox.WordWrap = false;
+                                contador++;
+                            }
+
+                            else
                             {
                                 textBox.BackColor = Color.Yellow;
                                 textBox.WordWrap = false;
-
-                                continue;
+                                contador++;
                             }
 
-                            if (palavra[index].ToString().ToLower() == palavraChutada[index].ToString().ToLower())
-                            {
-                                textBox.BackColor = Color.DarkGreen;
-                                textBox.WordWrap = false;
-                                continue;
-                            }
-                        }
-                        catch (IndexOutOfRangeException)
+                        }catch(IndexOutOfRangeException)
                         {
-                            PegarPalavraCaixa();
+                           
                         }
-
-                        
                     }
 
                     else
                     {
                         textBox.BackColor = Color.DarkGray;
                         textBox.WordWrap = false;
+                        contador++;
 
                     }
                 }
-
-                else
-                    continue;
             }
 
             if (VerificarVitoria(palavra))
@@ -184,6 +181,74 @@ namespace Term.WinApp
             final += 5;
         }
 
+        //private void VerificarSeAcertou()
+        //{
+        //    string palavra = jogo.palavra;
+
+        //    palavraChutada = PegarPalavraCaixa();
+
+
+
+        //    foreach (TextBox textBox in panel.Controls.OfType<TextBox>())
+        //    {
+        //        string strTag = textBox.Tag.ToString();
+        //        int tag = Convert.ToInt32(strTag);
+
+        //        if (tag >= inicial && tag <= final)
+        //        {
+
+        //            if (palavra.Contains(textBox.Text))
+        //            {
+
+        //                int index = palavra.IndexOf(textBox.Text);
+
+        //                try
+        //                {
+        //                    if (palavra[index].ToString().ToLower() != palavraChutada[index].ToString())
+        //                    {
+        //                        textBox.BackColor = Color.Yellow;
+        //                        textBox.WordWrap = false;
+
+        //                        continue;
+        //                    }
+
+        //                    if (palavra[index].ToString().ToLower() == palavraChutada[index].ToString())
+        //                    {
+        //                        textBox.BackColor = Color.DarkGreen;
+        //                        textBox.WordWrap = false;
+        //                        continue;
+        //                    }
+        //                }
+        //                catch (IndexOutOfRangeException)
+        //                {
+        //                    PegarPalavraCaixa();
+        //                }
+        //            }
+
+        //            else
+        //            {
+        //                textBox.BackColor = Color.DarkGray;
+        //                textBox.WordWrap = false;
+
+        //            }
+        //        }
+
+        //        else
+        //            continue;
+        //    }
+
+        //    if (VerificarVitoria(palavra))
+        //        return;
+
+        //    if (VerificarDerrota())
+        //        return;
+
+        //    inicial += 5;
+        //    final += 5;
+        //}
+
+
+
         private bool VerificarDerrota()
         {
             if(jogo.contador > 25)
@@ -194,6 +259,7 @@ namespace Term.WinApp
                 this.final = 5;
 
                 LimparQuadro();
+                VoltarCorBotoes();
                 return true;
             }
              return false;
@@ -209,10 +275,19 @@ namespace Term.WinApp
                 this.final = 5;
 
                 LimparQuadro();
+                VoltarCorBotoes();
                 return true;
             }
 
             return false;
+        }
+
+        private void VoltarCorBotoes()
+        {
+            foreach(Button btn in caixaTeclado.Controls)
+            {
+                btn.BackColor = Color.Teal;
+            }
         }
 
         private void LimparQuadro()
@@ -238,11 +313,12 @@ namespace Term.WinApp
 
                 if (tag == ponto && tag <= final)
                 {
+                    if (palavra.Length == 5)
+                        break;
+
                     palavra += textBox.Text;
                     ponto++;
 
-                    if (palavra.Length == 5)
-                        break;
                 }
             }
 

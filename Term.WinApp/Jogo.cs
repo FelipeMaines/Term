@@ -68,11 +68,9 @@ namespace Term.WinApp
 
             int numeroRandomico = rand.Next(0, palavras.Length);
 
-            return palavras[numeroRandomico];
+            return "arara";
+
+            //return palavras[numeroRandomico].ToLower();
         }
-
-       
-
-
     }
 }
